@@ -19,7 +19,7 @@
       3. Alert Management: Admins can manage alerts, including resolving them and adding comments regarding their resolution. These comments are visible to users.
       4. Dashboard: A comprehensive dashboard that provides an overview of user activities, grievances, and alerts.
 
-# Technology Used are Frontend(HTML5, CSS) and JavaScript as a part of Backend.
+# Technology Used are Frontend(HTML5, CSS), JavaScript as a part of Backend and Leaflet for Mapping geospatial database of critical water infrastructure.
 
 
 # Contact
