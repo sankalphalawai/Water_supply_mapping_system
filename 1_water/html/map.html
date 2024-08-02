@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Supply Mapping System</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+        }
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .b nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5em 1em;
+            margin: 0 0.5em;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        main {
+            padding: 2em;
+            text-align: center;
+        }
+
+        main h3 {
+            margin-bottom: 2em;
+            font-size: 1.5em;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.7em 1.5em;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #map {
+            height: 90vh;
+            display: none;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background: #4CAF50;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer a {
+            color: #ffeb3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Water Supply Mapping System</h1>
+        <div class="b">
+            <nav>
+                <a href="map.html">Map</a> |
+                <a href="alerts.html">Alerts</a> |
+                <a href="grievance.html">Grievance</a> |
+                <a href="status.html">Status</a> |
+                <a href="initial.html">Logout</a> <!-- Replace with actual logout functionality -->
+            </nav>
+        </div>
+    </header>
+    <main>
+        <h3>Click on 'MAP' button to view water supply infrastructures!</h3>
+        <button onclick="showMap()">Map</button>
+        <div id="map"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p>
+        <p>Developed By:</p>
+        <p>SaiPrasad &nbsp;&nbsp;|&nbsp;&nbsp; Sankalp &nbsp;&nbsp;|&nbsp;&nbsp; Sanket</p>
+        <p>Email: <a href="mailto:sankalp.halawai@gmail.com">sankalp.halawai@gmail.com</a></p>
+    </footer>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>

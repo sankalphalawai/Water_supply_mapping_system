@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>User Registration</h1>
+    </header>
+
+    <main>
+        <section id="registerSection">
+            <h2 style="text-align:center;">Register</h2>
+            <form id="registerForm">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="usernameReg">Username:</label>
+                <input type="text" id="usernameReg" name="usernameReg" required>
+                <label for="passwordReg">Password:</label>
+                <input type="password" id="passwordReg" name="passwordReg" required>
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('usernameReg').value;
+            const password = document.getElementById('passwordReg').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+
+            users.push({ firstName, lastName, email, username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Registration successful!');
+
+            // Redirect to admin dashboard or user dashboard
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

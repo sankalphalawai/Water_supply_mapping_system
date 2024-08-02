@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grievance Status - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Dynamic CSS for status.html */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .b nav {
+            margin-top: 10px;
+        }
+
+        .b a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        .b a:hover {
+            background-color: #45a049;
+        }
+
+        main {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Grievance Status</h1>
+        <div class="b">
+            <nav>
+                <a href="map.html">Map</a> |
+                <a href="alerts.html">Alerts</a> |
+                <a href="grievance.html">Grievance</a> |
+                <a href="status.html">Status</a> |
+                <a href="index.html">Logout</a> <!-- Replace with actual logout functionality -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <h2>Filed Grievances</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Address</th>
+                    <th>Location</th>
+                    <th>Problem</th>
+                    <th>Date Filed</th>
+                    <th>Time Filed</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="grievanceList">
+                <!-- Grievances will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+    <footer style="margin-bottom: 0px;">
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const grievanceList = JSON.parse(localStorage.getItem('userGrievances')) || [];
+            const grievanceTableBody = document.getElementById('grievanceList');
+
+            grievanceList.forEach(grievance => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grievance.fullName}</td>
+                    <td>${grievance.address}</td>
+                    <td>${grievance.location}</td>
+                    <td>${grievance.problem}</td>
+                    <td>${grievance.filedDate}</td>
+                    <td>${grievance.filedTime}</td>
+                    <td>${grievance.status}</td>
+                `;
+                grievanceTableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Admin Login</h1>
+    </header>
+
+    <main>
+        <section id="adminLoginForm">
+            <h2 style="text-align: center;">Login</h2>
+            <form id="adminLogin">
+                <label for="adminUsername">Admin Username:</label>
+                <input type="text" id="adminUsername" name="adminUsername" required>
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" name="adminPassword" required>
+                <label for="adminInfrastructure">Infrastructure Type:</label>
+                <select id="adminInfrastructure" name="adminInfrastructure" required>
+                    <option value="surfaceWaterIntakes">Surface Water Intakes</option>
+                    <option value="pipeFactory">Pipe Factory</option>
+                    <option value="pumpingStation">Pumping Station</option>
+                    <option value="waterSupplier">Water Supplier</option>
+                    <option value="urbanWaterSupplyAndDrainage">Urban Water Supply and Drainage</option>
+                    <option value="plumbing">Plumbing</option>
+                </select>
+                <button type="submit">Login</button>
+            </form>
+            <p style="text-align: center;">Not registered? <a href="admin-register.html">Register</a></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Handle admin login form submission
+        document.getElementById('adminLogin').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Retrieve input values
+            let adminUsername = document.getElementById('adminUsername').value;
+            let adminPassword = document.getElementById('adminPassword').value;
+            let adminInfrastructure = document.getElementById('adminInfrastructure').value;
+
+            // Retrieve admin data from localStorage
+            let storedAdmins = JSON.parse(localStorage.getItem('admins')) || [];
+
+            // Check if storedAdmin exists and matches input
+            let validAdmin = storedAdmins.find(admin => 
+                admin.username === adminUsername &&
+                admin.password === adminPassword &&
+                admin.infrastructure === adminInfrastructure
+            );
+
+            if (validAdmin) {
+                // Redirect to admin dashboard
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                alert('Invalid admin credentials. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

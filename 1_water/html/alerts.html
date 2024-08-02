@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Alert</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            overflow: auto;
+            position: relative; /* Allows absolute positioning of message box */
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('image copy 2.png') no-repeat center center;
+            background-size: cover;
+            filter: blur(8px);
+            z-index: -1; /* Place the background behind other content */
+        }
+
+        header {
+            width: 100%;
+            background-color: rgba(76, 175, 80, 0.8);
+            padding: 1em 0;
+            margin-bottom: 2em;
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            border-radius: 5px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1em;
+            margin-bottom: 2em;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5em 1em;
+            background-color: rgba(76, 175, 80, 0.8);
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: rgba(69, 160, 73, 0.8);
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1200px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for form */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 0 auto; /* Center container horizontally */
+            margin-bottom: 2em;
+        }
+
+        #map {
+            height: 600px;
+            width: 48%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        form {
+            width: 48%;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="time"], input[type="date"], select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.7em 1.5em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #messageBox {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            line-height: 60px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex; /* Flexbox for alignment */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000; /* Ensure it is above other content */
+        }
+
+        #messageBox p {
+            margin: 0;
+            font-size: 20px;
+            display: block; /* Ensure the text is visible */
+        }
+
+        #popup {
+            position: fixed;
+            bottom: 80px; /* Slightly above the message box */
+            right: 10px;
+            width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            display: none; /* Hidden by default */
+            z-index: 1001; /* Ensure it is above other content */
+        }
+
+        #popup p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        #popup button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        #popup button:hover {
+            background-color: #45a049;
+        }
+
+        #historyButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.7em 1.5em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        #historyButton:hover {
+            background-color: #45a049;
+        }
+
+        #history {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        #historyTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #historyTable th, #historyTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #historyTable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #map, form {
+                width: 90%;
+                margin-bottom: 2em;
+            }
+
+            #messageBox {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 12px;
+            }
+
+            #popup {
+                width: 90%;
+            }
+        }
+
+        #history {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 0;
+        }
+    
+        #history.active {
+            display: block;
+            max-height: 1000px; /* Set a maximum height that is larger than the content */
+            opacity: 1;
+        }
+        #historyTable {
+            width: 81%;
+            margin-left: 140px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden; /* Ensure border-radius is applied to the entire table */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+        }
+    
+        #historyTable th, #historyTable td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+    
+        #historyTable th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+    
+        #historyTable td {
+            background-color: #f9f9f9;
+            animation: fadeIn 0.5s ease-in; /* Fade-in animation */
+        }
+    
+        #historyTable tr:hover td {
+            background-color: #e0f7e9; /* Highlight row on hover */
+        }
+    
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    
+        /* Make the table responsive */
+        @media (max-width: 600px) {
+            #historyTable {
+                width: 100%;
+                margin-left: 0;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Water Supply Mapping System
+    
+        <nav>
+            <a href="map.html">Map</a> |
+            <a href="alerts.html">Alerts</a> |
+            <a href="grievance.html">Grievance</a> |
+            <a href="status.html">Status</a> |
+            <a href="initial.html">Logout</a> <!-- Replace with actual logout functionality -->
+        </nav>
+    </header>
+    <div class="container">
+        <div id="map"></div>
+        <form id="alertForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="type">Type of Alert:</label>
+            <select id="type" required>
+                <option value="SelectOn">Select One</option>
+                <option value="Contamination">Contamination</option>
+                <option value="Increase in Flow Rate">Increase in Flow Rate</option>
+                <option value="Leakage">Leakage</option>
+                <option value="Pipe Burst">Pipe Burst</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" required>
+
+            <label for="time">Time:</label>
+            <input type="time" id="time" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+
+            <label for="severity">Severity:</label>
+            <select id="severity" required>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+
+            <button type="button" onclick="submitAlert()">Submit Alert</button>
+        </form>
+    </div>
+    <button id="historyButton">View Alert History</button>
+    <div id="history">
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Time</th>
+                    <th>Date</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
+    <div id="messageBox">
+        <p>!</p>
+    </div>
+    <div id="popup">
+        <p id="popupText"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([16.8302, 75.7100], 13);
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    
+        // Handle map clicks
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lon = e.latlng.lng;
+            var locationInput = document.getElementById('location');
+            locationInput.value = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+        });
+    
+        document.getElementById('messageBox').addEventListener('click', function () {
+            var popup = document.getElementById('popup');
+            popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        });
+    
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    
+        function submitAlert() {
+            var name = document.getElementById('name').value;
+            var type = document.getElementById('type').value;
+            var location = document.getElementById('location').value;
+            var time = document.getElementById('time').value;
+            var date = document.getElementById('date').value;
+            var severity = document.getElementById('severity').value;
+    
+            var alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            alerts.push({
+                name: name,
+                type: type,
+                location: location,
+                time: time,
+                date: date,
+                severity: severity,
+                status: 'Unsolved'
+            });
+    
+            localStorage.setItem('alerts', JSON.stringify(alerts));
+    
+            document.getElementById('alertForm').reset();
+    
+            alert('Alert submitted successfully!');
+            populateHistoryTable();
+        }
+    
+        function populateHistoryTable() {
+            var alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            var historyTableBody = document.getElementById('historyTableBody');
+            historyTableBody.innerHTML = '';
+    
+            alerts.forEach(function (alert, index) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${alert.name}</td>
+                    <td>${alert.type}</td>
+                    <td>${alert.location}</td>
+                    <td>${alert.time}</td>
+                    <td>${alert.date}</td>
+                    <td>${alert.severity}</td>
+                    <td>${alert.status}</td>
+                    <td>
+                        <button onclick="viewAlert(${index})">View</button>
+                        <button onclick="deleteAlert(${index})">Delete</button>
+                    </td>
+                `;
+                historyTableBody.appendChild(row);
+            });
+        }
+    
+        function viewAlert(index) {
+            var alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            var alert = alerts[index];
+    
+            document.getElementById('popupText').innerText = `
+                Name: ${alert.name}\n
+                Type: ${alert.type}\n
+                Location: ${alert.location}\n
+                Time: ${alert.time}\n
+                Date: ${alert.date}\n
+                Severity: ${alert.severity}\n
+                Status: ${alert.status}
+            `;
+    
+            document.getElementById('popup').style.display = 'block';
+        }
+    
+        function deleteAlert(index) {
+            var alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            alerts.splice(index, 1); // Remove the alert at the specified index
+            localStorage.setItem('alerts', JSON.stringify(alerts));
+    
+            alert('Alert deleted successfully!');
+            populateHistoryTable();
+        }
+    
+        document.getElementById('historyButton').addEventListener('click', function () {
+            var history = document.getElementById('history');
+            history.classList.toggle('active');
+        });
+    
+        window.onload = populateHistoryTable;
+    </script>
+</body>
+</html>

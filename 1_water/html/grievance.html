@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Grievance - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>File Grievance</h1>
+    
+        <div class="b">
+            <nav>
+                <a href="map.html">Map</a> |
+                <a href="alerts.html">Alerts</a> |
+                <a href="grievance.html">Grievance</a> |
+                <a href="status.html">Status</a> |
+                <a href="initial.html">Logout</a> <!-- Replace with actual logout functionality -->
+            </nav>
+        </div>
+    </header>
+
+    <h1 style="text-align: center;">File a grievance Here!</h1>
+
+    <main>
+        <form id="grievanceForm">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required>
+            
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+            
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+            
+            <label for="problem">Problem Facing:</label>
+            <textarea id="problem" name="problem" rows="4" cols="50" required></textarea>
+            
+            <label for="media">Upload Images/Videos:</label>
+            <input type="file" id="media" name="media" accept="image/*, video/*">
+            
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Placeholder for submission success/error message -->
+        <div id="submissionMessage" style="display: none; color: green; text-align:center;"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        document.getElementById('grievanceForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const fullName = document.getElementById('fullName').value;
+            const address = document.getElementById('address').value;
+            const location = document.getElementById('location').value;
+            const problem = document.getElementById('problem').value;
+            const media = document.getElementById('media').value;
+
+            const currentDate = new Date();
+            const filedDate = currentDate.toLocaleDateString();
+            const filedTime = currentDate.toLocaleTimeString();
+
+            // Prepare grievance object
+            const grievance = {
+                fullName: fullName,
+                address: address,
+                location: location,
+                problem: problem,
+                filedDate: filedDate,
+                filedTime: filedTime,
+                media: media,
+                status: 'Unsolved' // Default status when submitted
+            };
+
+            // Save grievance to localStorage for status.html (for users)
+            let userGrievances = JSON.parse(localStorage.getItem('userGrievances')) || [];
+            userGrievances.push(grievance);
+            localStorage.setItem('userGrievances', JSON.stringify(userGrievances));
+
+            // Save grievance to localStorage for manage-problems.html (for admin)
+            let adminProblems = JSON.parse(localStorage.getItem('adminProblems')) || [];
+            adminProblems.push(grievance);
+            localStorage.setItem('adminProblems', JSON.stringify(adminProblems));
+
+            // Display submission message
+            const submissionMessage = document.getElementById('submissionMessage');
+            submissionMessage.innerText = 'Grievance submitted successfully.';
+            submissionMessage.style.display = 'block';
+            
+
+            // Clear form fields after submission
+            document.getElementById('grievanceForm').reset();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Register - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Admin Register</h1>
+    </header>
+
+    <main>
+        <section id="adminRegisterForm">
+            <h2 style="text-align: center;">Register</h2>
+            <form id="adminRegister">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+                <label for="adminInfrastructure">Infrastructure Type:</label>
+                <select id="adminInfrastructure" name="adminInfrastructure" required>
+                    <option value="surfaceWaterIntakes">Surface Water Intakes</option>
+                    <option value="pipeFactory">Pipe Factory</option>
+                    <option value="pumpingStation">Pumping Station</option>
+                    <option value="waterSupplier">Water Supplier</option>
+                    <option value="urbanWaterSupplyAndDrainage">Urban Water Supply and Drainage</option>
+                    <option value="plumbing">Plumbing</option>
+                </select>
+                <label for="adminUsername">Admin Username:</label>
+                <input type="text" id="adminUsername" name="adminUsername" required>
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" name="adminPassword" required>
+                <label for="confirmAdminPassword">Confirm Password:</label>
+                <input type="password" id="confirmAdminPassword" name="confirmAdminPassword" required>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Handle admin registration form submission
+        document.getElementById('adminRegister').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Retrieve input values
+            let firstName = document.getElementById('firstName').value;
+            let lastName = document.getElementById('lastName').value;
+            let adminInfrastructure = document.getElementById('adminInfrastructure').value;
+            let adminUsername = document.getElementById('adminUsername').value;
+            let adminPassword = document.getElementById('adminPassword').value;
+            let confirmAdminPassword = document.getElementById('confirmAdminPassword').value;
+
+            // Validate passwords match
+            if (adminPassword !== confirmAdminPassword) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+
+            // Retrieve existing admins data from localStorage
+            let storedAdmins = JSON.parse(localStorage.getItem('admins')) || [];
+
+            // Check if username already exists
+            let existingAdmin = storedAdmins.find(admin => admin.username === adminUsername);
+            if (existingAdmin) {
+                alert('Username already exists. Please choose a different username.');
+                return;
+            }
+
+            // Add new admin to the storage
+            storedAdmins.push({
+                firstName: firstName,
+                lastName: lastName,
+                infrastructure: adminInfrastructure,
+                username: adminUsername,
+                password: adminPassword
+            });
+
+            // Save updated admin data to localStorage
+            localStorage.setItem('admins', JSON.stringify(storedAdmins));
+
+            alert('Admin registered successfully.');
+            window.location.href = 'admin-login.html';
+        });
+    </script>
+</body>
+</html>

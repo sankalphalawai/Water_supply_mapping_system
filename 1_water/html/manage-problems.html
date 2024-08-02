@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Problems - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General styles (unchanged from previous) */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .b {
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .b nav a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+
+        .b nav a:hover {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(98, 211, 22, 0.1);
+        }
+
+        .problem-list {
+            margin-top: 20px;
+        }
+
+        .problem-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .problem-list th, .problem-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .problem-list th {
+            background-color: #f2f2f2;
+        }
+
+        /* Styles for status buttons */
+        .status-button {
+            padding: 6px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .solved {
+            background-color: #28a745;
+        }
+
+        .unsolved {
+            background-color: #dc3545;
+        }
+
+        .delete-button {
+            padding: 6px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Manage Problems</h1>
+    
+        <div class="b">
+            <nav>
+                <a href="admin-dashboard.html">Admin Dashboard</a> |
+                <a href="initial.html">Logout</a> <!-- Replace with actual logout functionality -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2>Submitted Problems</h2>
+            <div class="problem-list" style="text-align: center;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Address</th>
+                            <th>Location</th>
+                            <th>Problem</th>
+                            <th>Filed Date</th>
+                            <th>Filed Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="problemTableBody">
+                        <!-- Problems will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Function to populate problems from localStorage
+        function populateProblemTable() {
+            const problems = JSON.parse(localStorage.getItem('adminProblems')) || [];
+
+            const problemTableBody = document.getElementById('problemTableBody');
+            problemTableBody.innerHTML = '';
+
+            problems.forEach((problem, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${problem.fullName}</td>
+                    <td>${problem.address}</td>
+                    <td>${problem.location}</td>
+                    <td>${problem.problem}</td>
+                    <td>${problem.filedDate}</td>
+                    <td>${problem.filedTime}</td>
+                    <td>${problem.status}</td>
+                    <td>
+                        <button class="status-button ${problem.status === 'Solved' ? 'solved' : 'unsolved'}"
+                                onclick="changeStatus(${index})">
+                            ${problem.status === 'Solved' ? 'Mark Unsolved' : 'Mark Solved'}
+                        </button>
+                        <button class="delete-button" onclick="confirmDelete(${index})">Delete</button>
+                    </td>
+                `;
+                problemTableBody.appendChild(row);
+            });
+        }
+
+        // Function to change grievance status
+        function changeStatus(index) {
+            let problems = JSON.parse(localStorage.getItem('adminProblems')) || [];
+
+            // Toggle status
+            if (problems[index].status === 'Solved') {
+                problems[index].status = 'Unsolved';
+            } else {
+                problems[index].status = 'Solved';
+            }
+
+            // Update localStorage
+            localStorage.setItem('adminProblems', JSON.stringify(problems));
+
+            // Repopulate table
+            populateProblemTable();
+
+            // Update user grievance status in status.html
+            updateGrievanceStatus(problems[index]);
+        }
+
+        // Function to update user grievance status in status.html
+        function updateGrievanceStatus(problem) {
+            let userGrievances = JSON.parse(localStorage.getItem('userGrievances')) || [];
+
+            // Find corresponding grievance in userGrievances
+            const userGrievance = userGrievances.find(g => g.fullName === problem.fullName && g.filedDate === problem.filedDate);
+
+            if (userGrievance) {
+                userGrievance.status = problem.status;
+
+                // Update localStorage
+                localStorage.setItem('userGrievances', JSON.stringify(userGrievances));
+            }
+        }
+
+        // Function to confirm and delete a problem
+        function confirmDelete(index) {
+            if (confirm('Are you sure you want to delete this problem?')) {
+                let problems = JSON.parse(localStorage.getItem('adminProblems')) || [];
+                const deletedProblem = problems.splice(index, 1)[0]; // Remove problem from array
+
+                // Update localStorage
+                localStorage.setItem('adminProblems', JSON.stringify(problems));
+
+                // Repopulate table
+                populateProblemTable();
+
+                // Delete corresponding problem in status.html
+                deleteFromStatus(deletedProblem);
+            }
+        }
+
+        // Function to delete corresponding problem in status.html
+        function deleteFromStatus(problem) {
+            let userGrievances = JSON.parse(localStorage.getItem('userGrievances')) || [];
+
+            // Filter out the problem to delete
+            userGrievances = userGrievances.filter(g => !(g.fullName === problem.fullName && g.filedDate === problem.filedDate));
+
+            // Update localStorage
+            localStorage.setItem('userGrievances', JSON.stringify(userGrievances));
+        }
+
+        // Populate the table when the page loads
+        document.addEventListener('DOMContentLoaded', populateProblemTable);
+    </script>
+</body>
+</html>

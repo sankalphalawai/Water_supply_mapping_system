@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Water Supply Mapping System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .nav-links {
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            margin-left: 1em;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            padding: 2em;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .dashboard-button {
+            display: inline-block;
+            padding: 1em 2em;
+            margin: 1em 0.5em;
+            font-size: 1em;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .dashboard-button:hover {
+            background-color: #45a049;
+        }
+
+        .user-list {
+            margin-top: 20px;
+        }
+
+        .user-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-list th, .user-list td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .user-list th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .user-list td button {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .user-list .delete-button {
+            background-color: red;
+            color: white;
+        }
+
+        .user-list .modify-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .user-list .delete-button:hover {
+            background-color: darkred;
+        }
+
+        .user-list .modify-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <div class="nav-links">
+            <a href="initial.html" id="logoutButton">Logout</a>
+        </div>
+    </header>
+
+    <main>
+        <h2>Welcome, Admin !</h2>
+        
+        <a href="manage-problems.html" class="dashboard-button">Manage Problems</a>
+        <a href="manage-alerts.html" class="dashboard-button">Manage Alerts</a>
+
+        <section id="adminContent">
+            <h2>Manage Users</h2>
+            <div class="user-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- User rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Water Supply Mapping System. All rights reserved.</p><br>
+        <p>Developed By</p>
+    <p>SaiPrasad   &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;   Sankalp &nbsp;&nbsp;&nbsp;  |&nbsp;&nbsp;&nbsp;   Sanket</p>
+    <p>Email: <a href="sankalp.halawai@gmail.com" style="text-decoration: none; color: inherit;">sankalp.halawai@gmail.com</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'initial.html';
+        });
+
+        function populateUserTable() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userTableBody = document.getElementById('userTableBody');
+
+            userTableBody.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${user.firstName}</td>
+                    <td>${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.username}</td>
+                    <td>
+                        <button class="delete-button" onclick="deleteUser(${index})">Delete</button>
+                        <button class="modify-button" onclick="modifyUser(${index})">Modify</button>
+                    </td>
+                `;
+
+                userTableBody.appendChild(row);
+            });
+        }
+
+        function deleteUser(index) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.splice(index, 1);
+            localStorage.setItem('users', JSON.stringify(users));
+            populateUserTable();
+        }
+
+        function modifyUser(index) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users[index];
+            const newFirstName = prompt('Enter new first name:', user.firstName);
+            const newLastName = prompt('Enter new last name:', user.lastName);
+            const newEmail = prompt('Enter new email:', user.email);
+            const newUsername = prompt('Enter new username:', user.username);
+
+            if (newFirstName && newLastName && newEmail && newUsername) {
+                users[index] = {
+                    ...user,
+                    firstName: newFirstName,
+                    lastName: newLastName,
+                    email: newEmail,
+                    username: newUsername
+                };
+                localStorage.setItem('users', JSON.stringify(users));
+                populateUserTable();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', populateUserTable);
+    </script>
+</body>
+</html>
